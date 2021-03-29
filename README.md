@@ -26,6 +26,6 @@ Please follow these steps to start running our website:
 
 ## Contact
 
-If there is any issues or any suggestions, please contact zjian3@ualberta.ca.
+If there are any issues or any suggestions, please contact zjian3@ualberta.ca.
 
 Thanks! (*^_^*)
