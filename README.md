@@ -8,3 +8,8 @@ A web-based wildfire data visualization system
 ```git clone https://github.com/Jason0917/WildFire_Data_Visualization.git```
 
 2. Download wildfire_sample.csv or download the full dataset [here](https://drive.google.com/file/d/1tZJZ41LL4rI7QrwA5-POZYlrKIeup9D8/view?usp=sharing).
+
+3. Establish a Mysql database, create table and import data from the downloaded .csv file.
+
+4. Go to /src/main/resources/application.properties and modify the configuration accordingly.
+![Image]https://github.com/Jason0917/WildFire_Data_Visualization/blob/master/Configuration.png
