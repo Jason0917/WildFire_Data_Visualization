@@ -12,4 +12,4 @@ A web-based wildfire data visualization system
 3. Establish a Mysql database, create table and import data from the downloaded .csv file.
 
 4. Go to /src/main/resources/application.properties and modify the configuration accordingly.
-![Image]https://github.com/Jason0917/WildFire_Data_Visualization/blob/master/Configuration.png
+![Image](https://github.com/Jason0917/WildFire_Data_Visualization/blob/master/Configuration.png)
