@@ -1,5 +1,5 @@
 # WildFire_Data_Visualization
-A web-based wildfire data visualization system
+A web-based wildfire data visualization system based on Echarts.js, Spring Boot and Mysql.
 
 ## Getting Started
 
