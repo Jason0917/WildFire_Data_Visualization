@@ -3,6 +3,8 @@ A web-based wildfire data visualization system based on Echarts.js, Spring Boot 
 
 ## Getting Started
 
+Before running this project, please make sure that you have already installed Java, and IntelliJ IDEA is strongly recommended.
+
 1. Clone or download our project
 
 ```git clone https://github.com/Jason0917/WildFire_Data_Visualization.git```
