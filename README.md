@@ -7,6 +7,8 @@ Before running this project, please make sure that you have already installed Ja
 
 IntelliJ IDEA is strongly recommended for this project.
 
+Please follow these steps to start running our website:
+
 1. Clone or download our project
 
 ```git clone https://github.com/Jason0917/WildFire_Data_Visualization.git```
