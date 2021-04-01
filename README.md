@@ -32,6 +32,12 @@ Please follow these steps to start running our website:
 
 6. Open Wildfire_Scattermap.html or Wildfire_Heatmap.html to visit our website. Please note that by default, all HTTP requests will be sent to http://localhost:8443. If you change the port number or the address of server-side application. You need to change the ajax URLs in Wildfire_Scattermap.html and Wildfire_Heatmap.html.
 
+## Demo
+
+![Image](https://github.com/Jason0917/WildFire_Data_Visualization/blob/master/scatter_demo.png)
+
+![Image](https://github.com/Jason0917/WildFire_Data_Visualization/blob/master/heat_demo.png)
+
 ## More to Explore
 
 So far, only scatter map and heat map are included in this project. More visualization tools can be found at [Echarts.js](https://echarts.apache.org/zh/index.html).
