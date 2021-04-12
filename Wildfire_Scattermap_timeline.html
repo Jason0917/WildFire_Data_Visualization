@@ -12,27 +12,23 @@
         </div>
         <div>
             <ul class="nav navbar-nav">
-                <li class="dropdown">
+                <li class="dropdown active">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         Scatter Map<b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="Wildfire_Scattermap.html">Normal</a></li>
-                        <li><a href="Wildfire_Scattermap_timeline.html">Timeline</a></li>
+                        <li><a href="#">Timeline</a></li>
                     </ul>
                 </li>
-                <li class="active"><a href="#" id="heat">Heat Map</a></li>
-                <li><a href="Wildfire_Precipitation.html" id="precipitation">Precipitation Map</a></li>
+                <li><a href="Wildfire_Heatmap.html" id="heat">Heat Map</a></li>
+
             </ul>
         </div>
         <div style="margin-right: 1%">
             <form class="navbar-form navbar-right" role="search">
                 <div class="form-group">
                     <select id="Year" class="form-control" title="Year">
-                        <option>1980-1989</option>
-                        <option>1990-1999</option>
-                        <option>2000-2009</option>
-                        <option>2010-2019</option>
                         <option selected>2019</option>
                         <option>2018</option>
                         <option>2017</option>
@@ -105,7 +101,8 @@
                         <option>1950</option>
 
                     </select>
-                    <select id="Month" class="form-control" title="Month">
+                    <select id="Month" class="form-control" title="Month" data-toggle="popover" data-placement="bottom" data-trigger="hover"
+                            data-title="Month Selector Disabled" data-content="In timeline mode, wildfire records throughout the year will all be loaded.">
 
                         <option selected>All</option>
                         <option>Jan</option>
@@ -121,7 +118,8 @@
                         <option>Nov</option>
                         <option>Dec</option>
                     </select>
-                    <div id="checkbox" class="input-group" data-toggle="popover" data-placement="bottom" data-trigger="hover" data-title="Ignore Small Fire" data-content="Check if you want to ignore small fire with burned area smaller than 200 HA.">
+                    <div id="checkbox" class="input-group" data-toggle="popover" data-placement="bottom" data-trigger="hover"
+                         data-title="Ignore Small Fire" data-content="Check if you want to ignore small fire with burned area smaller than 200 HA.">
                             <span class="input-group-addon">
                             <input id="IgnoreSmallFire" type="checkbox"></span>
                         <input type="text" class="form-control" placeholder="Ignore Small Fire" readonly size="11px">
@@ -164,7 +162,6 @@
     .navbar { margin-bottom: 0}
 </style>
 
-<div id="pie" style="width: 30%; height: 40%; float: right;z-index:999">Hello!</div>
 <div id="container" style="height: 100%;margin-bottom: 0;position: relative;z-index: 1"></div>
 
 
@@ -200,9 +197,6 @@
                                 value: [records[i]['longitude'], records[i]['latitude'],
                                     records[i]['size'], records[i]['year'], records[i]['month'], records[i]['day']]
                             });
-                    }
-                    if (len==0){
-                        alert("There is no wildfire to show in this period!")
                     }
                 }
             });
@@ -264,23 +258,20 @@
                                     records[i]['size'], records[i]['year'], records[i]['month'], records[i]['day']]
                             });
                     }
-                    if (len==0){
-                        alert("There is no wildfire to show in this period!");
-                    }
                 }
             });
         }
+        console.log(processedRecords);
         return processedRecords;
     }
 
     var dom = document.getElementById("container");
     var myChart = echarts.init(dom);
-
-    var Pie = document.getElementById("pie");
-    var pieChart = echarts.init(Pie)
+    var app = {};
 
     var option;
-    var optionForPie;
+
+    var showScatter = true;
 
     // Initialization
     var processedRecords = [];
@@ -289,45 +280,84 @@
     var yearSelector = document.getElementById("Year");
     var monthSelector = document.getElementById("Month");
     var ignoreCheckbox = document.getElementById("IgnoreSmallFire");
-    yearSelector.onchange = function(){
-        if (yearSelector.value.includes("-")){
-            monthSelector.disabled = true;
-            monthSelector.value = "All";
-            ignoreCheckbox.checked = true;
-            ignoreCheckbox.disabled = true;
-        } else {
-            monthSelector.disabled = false;
-            ignoreCheckbox.disabled = false;
-        }
-    }
+    monthSelector.disabled = true;
+
 
     var checkbox = document.getElementById("checkbox");
     $("[data-toggle='popover']").popover();
 
     var retrieveBtn = document.getElementById("RetrieveBtn");
     retrieveBtn.onclick = function (){
-        processedRecords = getRecords();
         myChart.setOption({
-            series: [{
-                data: processedRecords
-            }]
-        });
-        pieChart.setOption({
-            series: [{
-                data: [
-                    {value: calculateDataForPieChart(processedRecords)['numberOfSmallFireIncidents'], name: 'Small Fire'},
-                    {value: calculateDataForPieChart(processedRecords)['numberOfLargeFireIncidents'], name: 'Large Fire'}
-                ]
-            },{
-                data: [
-                    {value: calculateDataForPieChart(processedRecords)['burnedAreaOfSmallFire'], name: 'Small Fire'},
-                    {value: calculateDataForPieChart(processedRecords)['burnedAreaOfLargeFire'], name: 'Large Fire'}
-                ]
+            options: [{
+                series: {
+                    data: getRecords(document.getElementById("Year").value,"All")
+                }
+            }, {
+                series: {
+                    data: getRecords(document.getElementById("Year").value,"Jan")
+                }
+            }, {
+                series: {
+                    data: getRecords(document.getElementById("Year").value,"Feb")
+                }
+            }, {
+                series: {
+                    data: getRecords(document.getElementById("Year").value,"Mar")
+                }
+            }, {
+                series: {
+                    data: getRecords(document.getElementById("Year").value,"Apr")
+                }
+            }, {
+                series: {
+                    data: getRecords(document.getElementById("Year").value,"May")
+                }
+            }, {
+                series: {
+                    data: getRecords(document.getElementById("Year").value,"Jun")
+                }
+            }, {
+                series: {
+                    data: getRecords(document.getElementById("Year").value,"Jul")
+                }
+            }, {
+                series: {
+                    data: getRecords(document.getElementById("Year").value,"Aug")
+                }
+            }, {
+                series: {
+                    data: getRecords(document.getElementById("Year").value,"Sep")
+                }
+            }, {
+                series: {
+                    data: getRecords(document.getElementById("Year").value,"Oct")
+                }
+            }, {
+                series: {
+                    data: getRecords(document.getElementById("Year").value,"Nov")
+                }
+            }, {
+                series: {
+                    data: getRecords(document.getElementById("Year").value,"Dec")
+                }
             }]
         });
     }
 
     option = {
+        timeline: {
+            axisType: 'category',
+            show: true,
+            data: ["All","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+            autoPlay: false,
+            playInterval: 1000,
+            left: '10%',
+            right: '10%',
+            z: 100,
+            bottom: '10%'
+        },
+        baseOption: {
             backgroundColor: 'transparent',
             title: {
                 text: 'Wildfire Data Visualization',
@@ -341,17 +371,19 @@
             tooltip: {
                 trigger: 'item',
                 formatter(params) {
-                    var month = params.value[4].toString();
-                    // console.log(month)
-                    if (month.length == 1) {
-                        month = "0" + month.toString();
+                    if (params.value.length==6) {
+                        var month = params.value[4].toString();
+                        // console.log(month)
+                        if (month.length == 1) {
+                            month = "0" + month.toString();
+                        }
+                        var day = params.value[5].toString();
+                        if (day.length == 1) {
+                            day = "0" + day.toString();
+                        }
+                        return "Longitude: " + params.value[0] + "&deg<br>" + "Latitude: " + params.value[1] + "&deg<br>"
+                            + "Burned Area: " + params.value[2] + " HA" + "<br>" + "Attack Date: " + params.value[3] + "-" + month + "-" + day;
                     }
-                    var day = params.value[5].toString();
-                    if (day.length == 1) {
-                        day = "0" + day.toString();
-                    }
-                    return "Longitude: " + params.value[0] + "&deg<br>" + "Latitude: " + params.value[1] + "&deg<br>"
-                        + "Burned Area: " + params.value[2] + " HA" + "<br>" + "Attack Date: " + params.value[3] + "-" + month + "-" + day;
                 }
             },
             bmap: {
@@ -491,24 +523,11 @@
                     ]
                 }
             },
-            visualMap: {
-                show: false,
-                top: 'top',
-                min: 0,
-                max: 100,
-                seriesIndex: 0,
-                calculable: true,
-                inRange: {
-                    color: ['blue', 'blue', 'green', 'yellow', 'red']
-                }
-            },
             series: [
                 {
                     name: 'Burned Area (HA)',
-                    type: 'heatmap',
+                    type: 'scatter',
                     coordinateSystem: 'bmap',
-                    pointSize: 15,
-                    blurSize: 15,
                     symbol: 'circle',
                     symbolSize: function (val) {
                         size = val[2] / 50;
@@ -538,122 +557,71 @@
                     }
                 }
             ]
-        };
-
-    // options for pie chart
-    optionForPie = {
-        title: {
-            text: 'Statistics based on wildfire size',
-            subtext: 'Small fire: fire smaller than 200HA',
-            textStyle: {
-                color: '#fff'
-            },
-            subtextStyle: {
-                color: '#fff'
-            },
-            left: 'center'
         },
-        tooltip: {
-            trigger: 'item',
-            formatter: '{a} <br/>{b} : {c} ({d}%)'
-        },
-        legend: {
-            left: 'center',
-            top: 'bottom',
-            textStyle: {
-                color: '#FFFFFF'
-            },
-            data: ['Small Fire', 'Large Fire']
-        },
-        toolbox: {
-            show: true,
-            feature: {
-                mark: {show: true},
-                dataView: {show: true, readOnly: false},
-                restore: {show: true},
-                saveAsImage: {show: true}
+        options: [{
+            series: {
+                data: getRecords(document.getElementById("Year").value,"All")
             }
-        },
-        series: [
-            {
-                name: 'Total number of fire incidents',
-                type: 'pie',
-                radius: '60%',
-                center: ['30%', '50%'],
-                itemStyle: {
-                    borderRadius: 5
-                },
-                label: {
-                    show: false
-                },
-                emphasis: {
-                    label: {
-                        show: true
-                    }
-                },
-                data: [
-                    {value: calculateDataForPieChart(processedRecords)['numberOfSmallFireIncidents'], name: 'Small Fire'},
-                    {value: calculateDataForPieChart(processedRecords)['numberOfLargeFireIncidents'], name: 'Large Fire'}
-                ]
-            },
-            {
-                name: 'Total fire area in hectare',
-                type: 'pie',
-                radius: '60%',
-                center: ['70%', '50%'],
-                label: {
-                    show: false
-                },
-                itemStyle: {
-                    borderRadius: 5
-                },
-                emphasis: {
-                    label: {
-                        show: true
-                    }
-                },
-                data: [
-                    {value: calculateDataForPieChart(processedRecords)['burnedAreaOfLargeFire'], name: 'Large Fire'},
-                    {value: calculateDataForPieChart(processedRecords)['burnedAreaOfSmallFire'], name: 'Small Fire'}
-                ]
+        }, {
+            series: {
+                data: getRecords(document.getElementById("Year").value,"Jan")
             }
-        ]
+        }, {
+            series: {
+                data: getRecords(document.getElementById("Year").value,"Feb")
+            }
+        }, {
+            series: {
+                data: getRecords(document.getElementById("Year").value,"Mar")
+            }
+        }, {
+            series: {
+                data: getRecords(document.getElementById("Year").value,"Apr")
+            }
+        }, {
+            series: {
+                data: getRecords(document.getElementById("Year").value,"May")
+            }
+        }, {
+            series: {
+                data: getRecords(document.getElementById("Year").value,"Jun")
+            }
+        }, {
+            series: {
+                data: getRecords(document.getElementById("Year").value,"Jul")
+            }
+        }, {
+            series: {
+                data: getRecords(document.getElementById("Year").value,"Aug")
+            }
+        }, {
+            series: {
+                data: getRecords(document.getElementById("Year").value,"Sep")
+            }
+        }, {
+            series: {
+                data: getRecords(document.getElementById("Year").value,"Oct")
+            }
+        }, {
+            series: {
+                data: getRecords(document.getElementById("Year").value,"Nov")
+            }
+        }, {
+            series: {
+                data: getRecords(document.getElementById("Year").value,"Dec")
+            }
+        }]
     };
-
-    pieChart.setOption(optionForPie);
-
-    function calculateDataForPieChart(records) {
-        len = records.length;
-        var numberOfSmallFireIncidents = 0;
-        var numberOfLargeFireIncidents = 0;
-        var burnedAreaOfSmallFire = 0;
-        var burnedAreaOfLargeFire = 0;
-        for (var i = 0; i < len; i++){
-            if (records[i].value[2]<200){
-                numberOfSmallFireIncidents += 1;
-                burnedAreaOfSmallFire += records[i].value[2];
-            } else {
-                numberOfLargeFireIncidents += 1;
-                burnedAreaOfLargeFire += records[i].value[2];
-            }
-        }
-        var statistics = {
-            'numberOfSmallFireIncidents': numberOfSmallFireIncidents,
-            'numberOfLargeFireIncidents': numberOfLargeFireIncidents,
-            'burnedAreaOfSmallFire': burnedAreaOfSmallFire.toFixed(2),
-            'burnedAreaOfLargeFire': burnedAreaOfLargeFire.toFixed(2)
-        };
-        console.log(statistics)
-        return statistics;
-    }
 
     // Rendering
     if (option && typeof option === 'object') {
-        myChart.setOption(option);
+        myChart.setOption(option,true);
     }
+
+    var option=myChart.getOption();
+    console.log(option)
 
 </script>
 
 </body>
 </html>
-    
