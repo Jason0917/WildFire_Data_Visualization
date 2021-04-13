@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html style="height: 100%;width: 100%">
+<head style="width: 100%">
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">
+                <span class="glyphicon glyphicon-fire"></span> Wildfire in Canada</a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        Scatter Map<b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="Wildfire_Scattermap.html">Normal</a></li>
+                        <li><a href="Wildfire_Scattermap_timeline.html">Timeline</a></li>
+                    </ul>
+                </li>
+                <li><a href="Wildfire_Heatmap.html" id="heat">Heat Map</a></li>
+                <li class="active"><a href="#" id="precipitation">Precipitation Map</a></li>
+                <li><a href="Wind_Speed.html" id="wind">Heat Map</a></li>
+            </ul>
+        </div>
+        <div style="margin-right: 1%">
+            <form class="navbar-form navbar-right" role="search">
+                <div class="form-group">
+                    <select id="Year" class="form-control" title="Year">
+                        <option selected>2019</option>
+                        <option>2018</option>
+                        <option>2017</option>
+                        <option>2016</option>
+                        <option>2015</option>
+                        <option>2014</option>
+                        <option>2013</option>
+                        <option>2012</option>
+                        <option>2011</option>
+                        <option>2011</option>
+                        <option>2010</option>
+
+                    </select>
+                    <select id="Month" class="form-control" title="Month">
+
+                        <option selected>All</option>
+                        <option>Jan</option>
+                        <option>Feb</option>
+                        <option>Mar</option>
+                        <option>Apr</option>
+                        <option>May</option>
+                        <option>Jun</option>
+                        <option>Jul</option>
+                        <option>Aug</option>
+                        <option>Sep</option>
+                        <option>Oct</option>
+                        <option>Nov</option>
+                        <option>Dec</option>
+                    </select>
+                </div>
+                <button type="button" id="RetrieveBtn" class="btn btn-default"><span class="glyphicon glyphicon-cloud-download"></span>
+                    Retrieve Map</button>
+            </form>
+        </div>
+    </nav>
+    <style>
+        body{
+            max-width:100%;
+        }
+        .navbar-default{
+            max-width:100%;
+        }
+    </style>
+</head>
+<body style="height: 100%;width: 100%;overflow-x: hidden;overflow-y: hidden">
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=5gHi9u8TiBqQbFy0tVR2wNWVIoOsWGtP"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/extension/bmap.min.js"></script>
+
+<style type="text/css">
+    .navbar { margin-bottom: 0}
+</style>
+
+<div id="container" style="height: 100%;margin-bottom: 0;position: relative;z-index: 1"></div>
+
+
+<script type="text/javascript">
+
+    function getRecords(year, month){
+        var YEAR;
+        var MONTH;
+        if (year!=null){
+            YEAR = year;
+            MONTH = month;
+        } else {
+            YEAR = document.getElementById("Year").value;
+            MONTH = document.getElementById("Month").value;
+        }
+        processedRecords = [];
+        if (MONTH=="All") {
+            myChart.showLoading();
+            $.ajax({
+                type: "GET",
+                async: false,
+                url: "http://localhost:8443/getPrecipitationMap?YEAR=" + YEAR,
+                dataType: "json",
+                success: function (res) {
+                    myChart.hideLoading();
+                    var records = res;
+                    var len = records.length;
+                    for (var i = 0; i < len; i++) {
+                        processedRecords.push(
+                            {
+                                CLIMATE_ID: records[i]['climate_ID'],
+                                value: [records[i]['longitude'], records[i]['latitude'],
+                                    records[i]['precipitation']]
+                            });
+                    }
+                    if (len==0){
+                        alert("There is no data to show in this period!")
+                    }
+                }
+            });
+        } else {
+            var month;
+            switch (MONTH) {
+                case "Jan":
+                    month = 1;
+                    break;
+                case "Feb":
+                    month = 2;
+                    break;
+                case "Mar":
+                    month = 3;
+                    break;
+                case "Apr":
+                    month = 4;
+                    break;
+                case "May":
+                    month = 5;
+                    break;
+                case "Jun":
+                    month = 6;
+                    break;
+                case "Jul":
+                    month = 7;
+                    break;
+                case "Aug":
+                    month = 8;
+                    break;
+                case "Sep":
+                    month = 9;
+                    break;
+                case "Oct":
+                    month = 10;
+                    break;
+                case "Nov":
+                    month = 11;
+                    break;
+                case "Dec":
+                    month = 12;
+                    break;
+            }
+            myChart.showLoading();
+            $.ajax({
+                type: "GET",
+                async: false,
+                url: "http://localhost:8443/getPrecipitationMap?YEAR=" + YEAR + "&MONTH=" + month,
+                dataType: "json",
+                success: function (res) {
+                    myChart.hideLoading();
+                    var records = res;
+                    var len = records.length;
+                    for (var i = 0; i < len; i++) {
+                        processedRecords.push(
+                            {
+                                CLIMATE_ID: records[i]['climate_ID'],
+                                value: [records[i]['longitude'], records[i]['latitude'],
+                                    records[i]['precipitation']]
+                            });
+                    }
+                    if (len==0){
+                        alert("There is no data to show in this period!");
+                    }
+                }
+            });
+        }
+        return processedRecords;
+    }
+
+    var dom = document.getElementById("container");
+    var myChart = echarts.init(dom);
+    var option;
+
+
+    // Initialization
+    var processedRecords = [];
+    processedRecords = getRecords();
+
+    var yearSelector = document.getElementById("Year");
+    var monthSelector = document.getElementById("Month");
+    yearSelector.onchange = function(){
+        if (yearSelector.value.includes("-")){
+            monthSelector.disabled = true;
+            monthSelector.value = "All";
+            ignoreCheckbox.checked = true;
+            ignoreCheckbox.disabled = true;
+        } else {
+            monthSelector.disabled = false;
+            ignoreCheckbox.disabled = false;
+        }
+    }
+
+    $("[data-toggle='popover']").popover();
+
+    var retrieveBtn = document.getElementById("RetrieveBtn");
+    retrieveBtn.onclick = function (){
+        processedRecords = getRecords();
+        myChart.setOption({
+            series: [{
+                data: processedRecords
+            }]
+        });
+    }
+    option = {
+            backgroundColor: 'transparent',
+            title: {
+                text: 'Precipitation Data Visualization',
+                subtext: 'data from Government of Canada',
+                sublink: 'https://climate-change.canada.ca/climate-data/#/monthly-climate-summaries',
+                left: 'center',
+                textStyle: {
+                    color: '#030303'
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter(params) {
+                    return "Longitude: " + params.value[0] + "&deg<br>" + "Latitude: " + params.value[1] + "&deg<br>"
+                        + "Total Precipitation: " + params.value[2] + " mm" + "<br>";
+                }
+            },
+            bmap: {
+                center: [-98, 57.963],
+                zoom: 5,
+                roam: true,
+                mapStyle: {
+                    styleJson: [
+                        {
+                            "featureType": "water",
+                            "elementType": "all",
+                            "stylers": {
+                                "color": "#4a88a7"
+                            }
+                        },
+                        {
+                            "featureType": "land",
+                            "elementType": "all",
+                            "stylers": {
+                                "color": "#efe7e7"
+                            }
+                        },
+                        {
+                            "featureType": "boundary",
+                            "elementType": "geometry",
+                            "stylers": {
+                                "color": "#064f85"
+                            }
+                        },
+                        {
+                            "featureType": "railway",
+                            "elementType": "all",
+                            "stylers": {
+                                "visibility": "off"
+                            }
+                        },
+                        {
+                            "featureType": "highway",
+                            "elementType": "geometry",
+                            "stylers": {
+                                "color": "#004981"
+                            }
+                        },
+                        {
+                            "featureType": "highway",
+                            "elementType": "geometry.fill",
+                            "stylers": {
+                                "color": "#005b96",
+                                "lightness": 1
+                            }
+                        },
+                        {
+                            "featureType": "highway",
+                            "elementType": "labels",
+                            "stylers": {
+                                "visibility": "off"
+                            }
+                        },
+                        {
+                            "featureType": "arterial",
+                            "elementType": "geometry",
+                            "stylers": {
+                                "color": "#004981"
+                            }
+                        },
+                        {
+                            "featureType": "arterial",
+                            "elementType": "geometry.fill",
+                            "stylers": {
+                                "color": "#00508b"
+                            }
+                        },
+                        {
+                            "featureType": "poi",
+                            "elementType": "all",
+                            "stylers": {
+                                "visibility": "off"
+                            }
+                        },
+                        {
+                            "featureType": "green",
+                            "elementType": "all",
+                            "stylers": {
+                                "color": "#056197",
+                                "visibility": "off"
+                            }
+                        },
+                        {
+                            "featureType": "subway",
+                            "elementType": "all",
+                            "stylers": {
+                                "visibility": "off"
+                            }
+                        },
+                        {
+                            "featureType": "manmade",
+                            "elementType": "all",
+                            "stylers": {
+                                "visibility": "off"
+                            }
+                        },
+                        {
+                            "featureType": "local",
+                            "elementType": "all",
+                            "stylers": {
+                                "visibility": "off"
+                            }
+                        },
+                        {
+                            "featureType": "arterial",
+                            "elementType": "labels",
+                            "stylers": {
+                                "visibility": "off"
+                            }
+                        },
+                        {
+                            "featureType": "boundary",
+                            "elementType": "geometry.fill",
+                            "stylers": {
+                                "color": "#029fd4"
+                            }
+                        },
+                        {
+                            "featureType": "building",
+                            "elementType": "all",
+                            "stylers": {
+                                "color": "#1a5787"
+                            }
+                        },
+                        {
+                            "featureType": "label",
+                            "elementType": "all",
+                            "stylers": {
+                                "visibility": "off"
+                            }
+                        }
+                    ]
+                }
+            },
+            visualMap: {
+                show: true,
+                top: 'top',
+                min: 0,
+                max: 200,
+                seriesIndex: 0,
+                calculable: true,
+                inRange: {
+                    color: ['#d93a5a', '#e35918', '#eec16a','#3ce373', '#3ce373', '#3ACEABFF', '#74add1', '#4575b4', '#313695']
+                }
+            },
+            series: [
+                {
+                    name: 'Precipitation',
+                    type: 'effectScatter',
+                    coordinateSystem: 'bmap',
+                    pointSize: 25,
+                    blurSize: 10,
+                    symbol: 'circle',
+                    symbolSize: function (val) {
+                        size = val[2];
+                        if (size>50){
+                            size = 50;
+                        } else if (size<5){
+                            size = 5;
+                        }
+                        return size;
+                    },
+                    data: processedRecords,
+                    encode: {
+                        value: 2
+                    },
+                    label: {
+                        formatter: '{@size}',
+                        position: 'right'
+                    },
+                    itemStyle: {
+                        color: '#e7f1e5',
+                        opacity: 0.8
+                    },
+                    emphasis: {
+                        label: {
+                            show: true
+                        }
+                    }
+                }
+            ]
+        };
+
+    // Rendering
+    if (option && typeof option === 'object') {
+        myChart.setOption(option);
+    }
+
+</script>
+
+</body>
+</html>

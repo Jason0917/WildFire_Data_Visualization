@@ -12,8 +12,18 @@
         </div>
         <div>
             <ul class="nav navbar-nav">
-                <li><a href="Wildfire_Scattermap.html" id="scatter">Scatter Map</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        Scatter Map<b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="Wildfire_Scattermap.html">Normal</a></li>
+                        <li><a href="Wildfire_Scattermap_timeline.html">Timeline</a></li>
+                    </ul>
+                </li>
                 <li class="active"><a href="#" id="heat">Heat Map</a></li>
+                <li><a href="Wildfire_Precipitation.html" id="precipitation">Precipitation Map</a></li>
+                <li><a href="Wind_Speed.html" id="wind">Heat Map</a></li>
             </ul>
         </div>
         <div style="margin-right: 1%">
@@ -32,7 +42,6 @@
                         <option>2014</option>
                         <option>2013</option>
                         <option>2012</option>
-                        <option>2011</option>
                         <option>2011</option>
                         <option>2010</option>
                         <option>2009</option>
@@ -156,6 +165,7 @@
     .navbar { margin-bottom: 0}
 </style>
 
+<div id="pie" style="width: 30%; height: 40%; float: right;z-index:999">Hello!</div>
 <div id="container" style="height: 100%;margin-bottom: 0;position: relative;z-index: 1"></div>
 
 
@@ -266,11 +276,12 @@
 
     var dom = document.getElementById("container");
     var myChart = echarts.init(dom);
-    var app = {};
+
+    var Pie = document.getElementById("pie");
+    var pieChart = echarts.init(Pie)
 
     var option;
-
-    var showScatter = true;
+    var optionForPie;
 
     // Initialization
     var processedRecords = [];
@@ -300,6 +311,19 @@
         myChart.setOption({
             series: [{
                 data: processedRecords
+            }]
+        });
+        pieChart.setOption({
+            series: [{
+                data: [
+                    {value: calculateDataForPieChart(processedRecords)['numberOfSmallFireIncidents'], name: 'Small Fire'},
+                    {value: calculateDataForPieChart(processedRecords)['numberOfLargeFireIncidents'], name: 'Large Fire'}
+                ]
+            },{
+                data: [
+                    {value: calculateDataForPieChart(processedRecords)['burnedAreaOfSmallFire'], name: 'Small Fire'},
+                    {value: calculateDataForPieChart(processedRecords)['burnedAreaOfLargeFire'], name: 'Large Fire'}
+                ]
             }]
         });
     }
@@ -516,6 +540,113 @@
                 }
             ]
         };
+
+    // options for pie chart
+    optionForPie = {
+        title: {
+            text: 'Statistics based on wildfire size',
+            subtext: 'Small fire: fire smaller than 200HA',
+            textStyle: {
+                color: '#fff'
+            },
+            subtextStyle: {
+                color: '#fff'
+            },
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        legend: {
+            left: 'center',
+            top: 'bottom',
+            textStyle: {
+                color: '#FFFFFF'
+            },
+            data: ['Small Fire', 'Large Fire']
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                mark: {show: true},
+                dataView: {show: true, readOnly: false},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        series: [
+            {
+                name: 'Total number of fire incidents',
+                type: 'pie',
+                radius: '60%',
+                center: ['30%', '50%'],
+                itemStyle: {
+                    borderRadius: 5
+                },
+                label: {
+                    show: false
+                },
+                emphasis: {
+                    label: {
+                        show: true
+                    }
+                },
+                data: [
+                    {value: calculateDataForPieChart(processedRecords)['numberOfSmallFireIncidents'], name: 'Small Fire'},
+                    {value: calculateDataForPieChart(processedRecords)['numberOfLargeFireIncidents'], name: 'Large Fire'}
+                ]
+            },
+            {
+                name: 'Total fire area in hectare',
+                type: 'pie',
+                radius: '60%',
+                center: ['70%', '50%'],
+                label: {
+                    show: false
+                },
+                itemStyle: {
+                    borderRadius: 5
+                },
+                emphasis: {
+                    label: {
+                        show: true
+                    }
+                },
+                data: [
+                    {value: calculateDataForPieChart(processedRecords)['burnedAreaOfLargeFire'], name: 'Large Fire'},
+                    {value: calculateDataForPieChart(processedRecords)['burnedAreaOfSmallFire'], name: 'Small Fire'}
+                ]
+            }
+        ]
+    };
+
+    pieChart.setOption(optionForPie);
+
+    function calculateDataForPieChart(records) {
+        len = records.length;
+        var numberOfSmallFireIncidents = 0;
+        var numberOfLargeFireIncidents = 0;
+        var burnedAreaOfSmallFire = 0;
+        var burnedAreaOfLargeFire = 0;
+        for (var i = 0; i < len; i++){
+            if (records[i].value[2]<200){
+                numberOfSmallFireIncidents += 1;
+                burnedAreaOfSmallFire += records[i].value[2];
+            } else {
+                numberOfLargeFireIncidents += 1;
+                burnedAreaOfLargeFire += records[i].value[2];
+            }
+        }
+        var statistics = {
+            'numberOfSmallFireIncidents': numberOfSmallFireIncidents,
+            'numberOfLargeFireIncidents': numberOfLargeFireIncidents,
+            'burnedAreaOfSmallFire': burnedAreaOfSmallFire.toFixed(2),
+            'burnedAreaOfLargeFire': burnedAreaOfLargeFire.toFixed(2)
+        };
+        console.log(statistics)
+        return statistics;
+    }
 
     // Rendering
     if (option && typeof option === 'object') {
