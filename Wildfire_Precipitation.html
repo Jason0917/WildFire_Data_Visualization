@@ -12,19 +12,24 @@
         </div>
         <div>
             <ul class="nav navbar-nav">
-                <li><a href="Wildfire_Scattermap.html" id="scatter">Scatter Map</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        Scatter Map<b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="Wildfire_Scattermap.html">Normal</a></li>
+                        <li><a href="Wildfire_Scattermap_timeline.html">Timeline</a></li>
+                    </ul>
+                </li>
                 <li><a href="Wildfire_Heatmap.html" id="heat">Heat Map</a></li>
                 <li class="active"><a href="#" id="precipitation">Precipitation Map</a></li>
+                <li><a href="Wind_Speed.html" id="wind">72H Wind</a></li>
             </ul>
         </div>
         <div style="margin-right: 1%">
             <form class="navbar-form navbar-right" role="search">
                 <div class="form-group">
                     <select id="Year" class="form-control" title="Year">
-                        <option>1980-1989</option>
-                        <option>1990-1999</option>
-                        <option>2000-2009</option>
-                        <option>2010-2019</option>
                         <option selected>2019</option>
                         <option>2018</option>
                         <option>2017</option>
@@ -36,66 +41,6 @@
                         <option>2011</option>
                         <option>2011</option>
                         <option>2010</option>
-                        <option>2009</option>
-                        <option>2008</option>
-                        <option>2007</option>
-                        <option>2006</option>
-                        <option>2005</option>
-                        <option>2004</option>
-                        <option>2003</option>
-                        <option>2002</option>
-                        <option>2001</option>
-                        <option>2000</option>
-                        <option>1999</option>
-                        <option>1998</option>
-                        <option>1997</option>
-                        <option>1996</option>
-                        <option>1995</option>
-                        <option>1994</option>
-                        <option>1993</option>
-                        <option>1992</option>
-                        <option>1991</option>
-                        <option>1990</option>
-                        <option>1989</option>
-                        <option>1988</option>
-                        <option>1987</option>
-                        <option>1986</option>
-                        <option>1985</option>
-                        <option>1984</option>
-                        <option>1983</option>
-                        <option>1982</option>
-                        <option>1981</option>
-                        <option>1980</option>
-                        <option>1979</option>
-                        <option>1978</option>
-                        <option>1977</option>
-                        <option>1976</option>
-                        <option>1975</option>
-                        <option>1974</option>
-                        <option>1973</option>
-                        <option>1972</option>
-                        <option>1971</option>
-                        <option>1970</option>
-                        <option>1969</option>
-                        <option>1968</option>
-                        <option>1967</option>
-                        <option>1966</option>
-                        <option>1965</option>
-                        <option>1964</option>
-                        <option>1963</option>
-                        <option>1962</option>
-                        <option>1961</option>
-                        <option>1960</option>
-                        <option>1959</option>
-                        <option>1958</option>
-                        <option>1957</option>
-                        <option>1956</option>
-                        <option>1955</option>
-                        <option>1954</option>
-                        <option>1953</option>
-                        <option>1952</option>
-                        <option>1951</option>
-                        <option>1950</option>
 
                     </select>
                     <select id="Month" class="form-control" title="Month">
@@ -114,11 +59,6 @@
                         <option>Nov</option>
                         <option>Dec</option>
                     </select>
-                    <div id="checkbox" class="input-group" data-toggle="popover" data-placement="bottom" data-trigger="hover" data-title="Ignore Small Fire" data-content="Check if you want to ignore small fire with burned area smaller than 200 HA.">
-                            <span class="input-group-addon">
-                            <input id="IgnoreSmallFire" type="checkbox"></span>
-                        <input type="text" class="form-control" placeholder="Ignore Small Fire" readonly size="11px">
-                    </div>
                 </div>
                 <button type="button" id="RetrieveBtn" class="btn btn-default"><span class="glyphicon glyphicon-cloud-download"></span>
                     Retrieve Map</button>
@@ -137,19 +77,6 @@
 <body style="height: 100%;width: 100%;overflow-x: hidden;overflow-y: hidden">
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
-<!-- Uncomment this line if you want to dataTool extension
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/extension/dataTool.min.js"></script>
--->
-<!-- Uncomment this line if you want to use gl extension
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl@2/dist/echarts-gl.min.js"></script>
--->
-<!-- Uncomment this line if you want to echarts-stat extension
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-stat@latest/dist/ecStat.min.js"></script>
--->
-<!-- Uncomment this line if you want to use map
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/map/js/china.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/map/js/world.js"></script>
--->
 <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=5gHi9u8TiBqQbFy0tVR2wNWVIoOsWGtP"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/extension/bmap.min.js"></script>
 
@@ -172,14 +99,13 @@
             YEAR = document.getElementById("Year").value;
             MONTH = document.getElementById("Month").value;
         }
-        const IGNORESMALLFIRE = document.getElementById("IgnoreSmallFire").checked;
         processedRecords = [];
         if (MONTH=="All") {
             myChart.showLoading();
             $.ajax({
                 type: "GET",
                 async: false,
-                url: "http://localhost:8443/getMap?YEAR=" + YEAR + "&ignoreSmallFire=" + IGNORESMALLFIRE,
+                url: "http://localhost:8443/getPrecipitationMap?YEAR=" + YEAR,
                 dataType: "json",
                 success: function (res) {
                     myChart.hideLoading();
@@ -188,13 +114,13 @@
                     for (var i = 0; i < len; i++) {
                         processedRecords.push(
                             {
-                                FIRE_ID: records[i]['fire_ID'],
+                                CLIMATE_ID: records[i]['climate_ID'],
                                 value: [records[i]['longitude'], records[i]['latitude'],
-                                    records[i]['size'], records[i]['year'], records[i]['month'], records[i]['day']]
+                                    records[i]['precipitation']]
                             });
                     }
                     if (len==0){
-                        alert("There is no wildfire to show in this period!")
+                        alert("There is no data to show in this period!")
                     }
                 }
             });
@@ -242,7 +168,7 @@
             $.ajax({
                 type: "GET",
                 async: false,
-                url: "http://localhost:8443/getMap?YEAR=" + YEAR + "&MONTH=" + month + "&ignoreSmallFire=" + IGNORESMALLFIRE,
+                url: "http://localhost:8443/getPrecipitationMap?YEAR=" + YEAR + "&MONTH=" + month,
                 dataType: "json",
                 success: function (res) {
                     myChart.hideLoading();
@@ -251,13 +177,13 @@
                     for (var i = 0; i < len; i++) {
                         processedRecords.push(
                             {
-                                FIRE_ID: records[i]['fire_ID'],
+                                CLIMATE_ID: records[i]['climate_ID'],
                                 value: [records[i]['longitude'], records[i]['latitude'],
-                                    records[i]['size'], records[i]['year'], records[i]['month'], records[i]['day']]
+                                    records[i]['precipitation']]
                             });
                     }
                     if (len==0){
-                        alert("There is no wildfire to show in this period!");
+                        alert("There is no data to show in this period!");
                     }
                 }
             });
@@ -267,11 +193,8 @@
 
     var dom = document.getElementById("container");
     var myChart = echarts.init(dom);
-    var app = {};
-
     var option;
 
-    var showScatter = true;
 
     // Initialization
     var processedRecords = [];
@@ -279,7 +202,6 @@
 
     var yearSelector = document.getElementById("Year");
     var monthSelector = document.getElementById("Month");
-    var ignoreCheckbox = document.getElementById("IgnoreSmallFire");
     yearSelector.onchange = function(){
         if (yearSelector.value.includes("-")){
             monthSelector.disabled = true;
@@ -292,7 +214,6 @@
         }
     }
 
-    var checkbox = document.getElementById("checkbox");
     $("[data-toggle='popover']").popover();
 
     var retrieveBtn = document.getElementById("RetrieveBtn");
@@ -307,28 +228,19 @@
     option = {
             backgroundColor: 'transparent',
             title: {
-                text: 'Wildfire Data Visualization',
-                subtext: 'data from CWFIS',
-                sublink: 'https://cwfis.cfs.nrcan.gc.ca/home',
+                text: 'Precipitation Data Visualization',
+                subtext: 'data from Government of Canada',
+                sublink: 'https://climate-change.canada.ca/climate-data/#/monthly-climate-summaries',
                 left: 'center',
                 textStyle: {
-                    color: '#fff'
+                    color: '#030303'
                 }
             },
             tooltip: {
                 trigger: 'item',
                 formatter(params) {
-                    var month = params.value[4].toString();
-                    // console.log(month)
-                    if (month.length == 1) {
-                        month = "0" + month.toString();
-                    }
-                    var day = params.value[5].toString();
-                    if (day.length == 1) {
-                        day = "0" + day.toString();
-                    }
                     return "Longitude: " + params.value[0] + "&deg<br>" + "Latitude: " + params.value[1] + "&deg<br>"
-                        + "Burned Area: " + params.value[2] + " HA" + "<br>" + "Attack Date: " + params.value[3] + "-" + month + "-" + day;
+                        + "Total Precipitation: " + params.value[2] + " mm" + "<br>";
                 }
             },
             bmap: {
@@ -341,14 +253,14 @@
                             "featureType": "water",
                             "elementType": "all",
                             "stylers": {
-                                "color": "#044161"
+                                "color": "#4a88a7"
                             }
                         },
                         {
                             "featureType": "land",
                             "elementType": "all",
                             "stylers": {
-                                "color": "#004981"
+                                "color": "#efe7e7"
                             }
                         },
                         {
@@ -469,29 +381,29 @@
                 }
             },
             visualMap: {
-                show: false,
+                show: true,
                 top: 'top',
                 min: 0,
-                max: 100,
+                max: 200,
                 seriesIndex: 0,
                 calculable: true,
                 inRange: {
-                    color: ['blue', 'blue', 'green', 'yellow', 'red']
+                    color: ['#d93a5a', '#e35918', '#eec16a','#3ce373', '#3ce373', '#3ACEABFF', '#74add1', '#4575b4', '#313695']
                 }
             },
             series: [
                 {
-                    name: 'Burned Area (HA)',
-                    type: 'heatmap',
+                    name: 'Precipitation',
+                    type: 'effectScatter',
                     coordinateSystem: 'bmap',
-                    pointSize: 15,
-                    blurSize: 15,
+                    pointSize: 25,
+                    blurSize: 10,
                     symbol: 'circle',
                     symbolSize: function (val) {
-                        size = val[2] / 50;
-                        if (size > 30) {
-                            size = 30;
-                        } else if (size < 5) {
+                        size = val[2];
+                        if (size>50){
+                            size = 50;
+                        } else if (size<5){
                             size = 5;
                         }
                         return size;
@@ -505,12 +417,12 @@
                         position: 'right'
                     },
                     itemStyle: {
-                        color: '#ff0000',
+                        color: '#e7f1e5',
                         opacity: 0.8
                     },
                     emphasis: {
                         label: {
-                            show: false
+                            show: true
                         }
                     }
                 }
@@ -526,4 +438,3 @@
 
 </body>
 </html>
-    
