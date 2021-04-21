@@ -13,12 +13,14 @@ public class PrecipitationController {
     @Autowired
     PrecipitationService precipitationService;
 
+    // maps HTTP getAllPrecipitation requests onto specific handler method
     @GetMapping("/getAllPrecipitation")
     public List<Precipitation> getAll() throws Exception {
         // Fetch all precipitation data
         return precipitationService.getAll(0);
     }
 
+    // maps HTTP getPrecipitationMap requests onto specific handler methods
     @GetMapping("/getPrecipitationMap")
     public List<Precipitation> getByYear(String YEAR, String MONTH) throws Exception {
         // Fetch all precipitation data by year and month

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html style="height: 100%;width: 100%">
 <head style="width: 100%">
-    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+          rel="stylesheet">
     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
@@ -60,7 +61,8 @@
                         <option>Dec</option>
                     </select>
                 </div>
-                <button type="button" id="RetrieveBtn" class="btn btn-default"><span class="glyphicon glyphicon-cloud-download"></span>
+                <button type="button" id="RetrieveBtn" class="btn btn-default">
+                    <span class="glyphicon glyphicon-cloud-download"></span>
                     Retrieve Map</button>
             </form>
         </div>
@@ -76,9 +78,12 @@
 </head>
 <body style="height: 100%;width: 100%;overflow-x: hidden;overflow-y: hidden">
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
-<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=5gHi9u8TiBqQbFy0tVR2wNWVIoOsWGtP"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/extension/bmap.min.js"></script>
+<script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script type="text/javascript"
+        src="https://api.map.baidu.com/api?v=2.0&ak=5gHi9u8TiBqQbFy0tVR2wNWVIoOsWGtP"></script>
+<script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/echarts@5/dist/extension/bmap.min.js"></script>
 
 <style type="text/css">
     .navbar { margin-bottom: 0}
@@ -90,6 +95,7 @@
 <script type="text/javascript">
 
     function getRecords(year, month){
+        // get records based on selected filters
         var YEAR;
         var MONTH;
         if (year!=null){
@@ -225,6 +231,8 @@
             }]
         });
     }
+
+    // options for the precipitation data visualization chart
     option = {
             backgroundColor: 'transparent',
             title: {
@@ -239,7 +247,8 @@
             tooltip: {
                 trigger: 'item',
                 formatter(params) {
-                    return "Longitude: " + params.value[0] + "&deg<br>" + "Latitude: " + params.value[1] + "&deg<br>"
+                    return "Longitude: " + params.value[0] + "&deg<br>" + "Latitude: "
+                        + params.value[1] + "&deg<br>"
                         + "Total Precipitation: " + params.value[2] + " mm" + "<br>";
                 }
             },
@@ -388,7 +397,8 @@
                 seriesIndex: 0,
                 calculable: true,
                 inRange: {
-                    color: ['#d93a5a', '#e35918', '#eec16a','#3ce373', '#3ce373', '#3ACEABFF', '#74add1', '#4575b4', '#313695']
+                    color: ['#d93a5a', '#e35918', '#eec16a','#3ce373',
+                        '#3ce373', '#3ACEABFF', '#74add1', '#4575b4', '#313695']
                 }
             },
             series: [
