@@ -9,7 +9,7 @@ IntelliJ IDEA is strongly recommended for this project.
 
 Please note that [Baidu Map API](http://lbsyun.baidu.com/) is embedded in this project. You need to apply for a access key [here](http://lbsyun.baidu.com/apiconsole/center#/home) for free.
 
-After getting an access key, put it here in both .html files.
+After getting an access key, put it here in all .html files.
 
 ![Image](https://github.com/Jason0917/WildFire_Data_Visualization/blob/master/ak.png)
 
